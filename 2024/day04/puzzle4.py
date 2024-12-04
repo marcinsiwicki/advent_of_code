@@ -34,7 +34,7 @@ def find_xmas(input_matrix, row, col):
             s += input_matrix[r][c]
         possible_lines.append(s)
 
-    matches = sum([1 for s in possible_lines if s == 'XMAS'])
+    matches = sum(1 for s in possible_lines if s == 'XMAS')
 
     return matches
 
@@ -48,7 +48,7 @@ def find_mas(input_matrix, row, col):
     match_strings = ['MAS', 'SAM']
 
     # only one orientation that results in valid string: x
-    if col > 0 and col < (n_cols-1) and row > 0 and row < (n_rows-1):
+    if 0 < col < (n_cols-1) and 0 < row < (n_rows-1):
         s_1 = input_matrix[row-1][col-1] + 'A' + input_matrix[row+1][col+1]
         s_2 = input_matrix[row-1][col+1] + 'A' + input_matrix[row+1][col-1]
         if s_1 in match_strings and s_2 in match_strings:
@@ -89,7 +89,7 @@ def part2(word_puzzle: list) -> int:
         for j in range(n_cols):
             if word_matrix[i][j] == 'A':
                 total += find_mas(word_matrix, i, j)
-    
+
     return total
 
 if __name__ == '__main__':
