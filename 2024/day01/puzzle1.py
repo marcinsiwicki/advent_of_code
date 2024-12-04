@@ -21,7 +21,7 @@ def part2(left: list, right: list) -> int:
 
 
 if __name__ == '__main__':
-    with open('advent_of_code/day01/input.txt', 'r', encoding='utf-8') as f:
+    with open('advent_of_code/2024/day01/input.txt', 'r', encoding='utf-8') as f:
         locations = f.readlines()
 
     # convert to list(list(int))

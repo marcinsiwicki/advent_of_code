@@ -8,7 +8,7 @@ def part1(instrs: list) -> int:
     pattern = r"mul\(\d{1,3},\d{1,3}\)"
     product = 0
     for line in instrs:
-        if matches:= re.findall(pattern, line):
+        if matches := re.findall(pattern, line):
             nums = [re.findall(r"\d{1,3}", mul) for mul in matches]
             product += sum(int(n[0]) * int(n[1]) for n in nums)
 
@@ -23,7 +23,7 @@ def part2(instrs: list) -> int:
     enable_mult = True
 
     for line in instrs:
-        if matches:= re.findall(pattern, line):
+        if matches := re.findall(pattern, line):
             for instr in matches:
                 if instr == "don't()":
                     enable_mult = False
@@ -38,7 +38,7 @@ def part2(instrs: list) -> int:
 
 
 if __name__ == '__main__':
-    with open('advent_of_code/day03/input.txt', 'r', encoding='utf-8') as f:
+    with open('advent_of_code/2024/day03/input.txt', 'r', encoding='utf-8') as f:
         instructions = f.readlines()
 
     print(f"Part 1 Product is {part1(instructions)}")

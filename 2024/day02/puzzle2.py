@@ -101,7 +101,7 @@ def part2(reports_: list) -> int:
 
 
 if __name__ == '__main__':
-    with open('advent_of_code/day02/input.txt', 'r', encoding='utf-8') as f:
+    with open('advent_of_code/2024/day02/input.txt', 'r', encoding='utf-8') as f:
         reports = f.readlines()
     reports = [level.replace('\n', '').split(' ') for level in reports]
     reports = [[int(i) for i in level] for level in reports]
