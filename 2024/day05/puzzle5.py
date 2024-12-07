@@ -3,7 +3,7 @@ Advent of Code 2024: Day 5
 """
 
 
-def is_sorted(order_map, pagenums) -> bool:
+def is_sorted(order_map: dict, pagenums: list) -> bool:
     """Check if list is already in correct order per rules."""
     valid_match = []
     for i, pagenum in enumerate(pagenums):
@@ -15,7 +15,7 @@ def is_sorted(order_map, pagenums) -> bool:
 
 
 
-def part1(orders, print_req):
+def part1(orders: list, print_req: list) -> tuple[int, list]:
     """Figure out what is printing correctly."""
     order_map = {}
     for o in orders:
@@ -36,7 +36,7 @@ def part1(orders, print_req):
     return running_total, incorrect_pagenums
 
 
-def part2(orders, to_sort):
+def part2(orders: list, to_sort: list) -> int:
     """Take incorrectly sorted pages and re-sort them."""
     order_map = {}
     for o in orders:
