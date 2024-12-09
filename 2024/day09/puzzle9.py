@@ -37,10 +37,6 @@ def part1(fragmented_disk: str) -> int:
 
 def part2(fragmented_disk: str) -> int:
     """Rearrange files reducing fragmentation."""
-
-    # TODO: refactor as to not rely on "real" index and use start/end pointers
-    #       cannot speed up past this as we need to update the "real" pointer for empty
-
     converted_disk = []
     empty_blocks = []
     file_id = 0
@@ -107,6 +103,45 @@ def part2(fragmented_disk: str) -> int:
     return checksum
 
 
+def part2_optimized(fragmented_disk: str) -> int:
+    """Use start/end points of each block to defrag."""
+    converted_disk = []
+    occupied_blocks = []
+    empty_blocks = []
+    file_id = 0
+    true_idx = 0
+
+    for i, c in enumerate(fragmented_disk):
+        if i % 2 == 0: # is a file
+            converted_disk += [file_id] * int(c)
+            occupied_blocks.append([true_idx, true_idx + int(c) - 1])
+            file_id += 1
+        else:
+            converted_disk += ['.'] * int(c)
+            empty_blocks.append([true_idx, true_idx + int(c) - 1])
+        true_idx += int(c)
+
+    for file_block in occupied_blocks[-1::-1]:
+        # find a valid empty block
+        for empty_block in empty_blocks:
+            if empty_block[0] > file_block[0]:
+                break
+            empty_size = empty_block[1] - empty_block[0] + 1
+            file_block_size = file_block[1] - file_block[0] + 1
+            if empty_size >= file_block_size:
+                # move the file over
+                e_start = empty_block[0]
+                f_start, f_end = file_block[0], file_block[1]
+                converted_disk[e_start:e_start+file_block_size] = converted_disk[f_start:f_end+1]
+                converted_disk[f_start:f_end+1] = ['.'] * file_block_size
+                empty_block[0] += file_block_size
+                if empty_block[0] > empty_block[1]:
+                    empty_blocks.remove(empty_block)
+                break
+
+    return sum(i * f_id for i, f_id in enumerate(converted_disk) if f_id != '.')
+
+
 if __name__ == '__main__':
     with open('advent_of_code/2024/day09/input.txt', 'r') as f:
         disk_map = f.readlines()
@@ -117,3 +152,5 @@ if __name__ == '__main__':
     print(f'Filesystem checksum: {part1(disk_map)} in {time.time() - s}')
     s = time.time()
     print(f'Defragged checksum: {part2(disk_map)} in {time.time() - s}')
+    s = time.time()
+    print(f'Defragged checksum (opt): {part2_optimized(disk_map)} in {time.time() - s}')
