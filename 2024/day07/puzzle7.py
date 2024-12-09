@@ -1,10 +1,7 @@
 """
 Advent of Code 2024: Day 7
 """
-import math
-import itertools
 import time
-from line_profiler import profile
 
 
 def part1(input_eqs: dict) -> int:

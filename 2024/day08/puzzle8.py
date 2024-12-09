@@ -1,7 +1,6 @@
 """
 Advent of Code 2024: Day 8
 """
-import pprint
 
 
 def part1(input_map, n_rows, n_cols):
