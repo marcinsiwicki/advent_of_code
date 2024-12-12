@@ -2,9 +2,8 @@
 Advent of Code 2024: Day 11
 """
 import time
+from functools import lru_cache
 from line_profiler import profile
-from functools import cache
-from collections import deque
 
 
 @profile
@@ -51,7 +50,7 @@ def part2(stones: list[str], blinks: int = 25) -> int:
     Part1 approach is too slow and mem intensive for Part2.
     """
 
-    @cache
+    @lru_cache(maxsize=None)
     def expand_stone(input_s):
         """Memoized function to return next stone output."""
         if input_s == '0':
@@ -64,7 +63,7 @@ def part2(stones: list[str], blinks: int = 25) -> int:
             new_val = int(input_s) * 2024
             return str(new_val)
 
-    @cache
+    @lru_cache(maxsize=None)
     def dfs(input_c, n_blink) -> int:
         """Recursive function to calculate given final len of a char and blink."""
         if not isinstance(input_c, tuple):
