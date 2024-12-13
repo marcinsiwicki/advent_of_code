@@ -2,7 +2,7 @@
 Advent of Code 2024: Day 13
 """
 import time
-import numpy
+import numpy as np
 
 
 def part1(in_games) -> int:
@@ -26,19 +26,15 @@ def part1(in_games) -> int:
 
 def part1_matrix(in_games) -> int:
     """Just for fun, do it with the matrices."""
-    import numpy as np
     token_cost = 0
     for game in in_games:
-        c1, c2 = game['prize']
-        a1, a2 = game['A']
-        b1, b2 = game['B']
-        matA = np.matrix([[a1, b1], [a2, b2]])
-        matB = np.matrix([[c1], [c2]])
+        matA = np.matrix(list(zip(*[game['A'], game['B']])))
+        matB = np.matrix(list(zip(game['prize'])))
 
         X = matA.I * matB
         A, B = X[0].item(0), X[1].item(0)
         if A.is_integer() and B.is_integer():
-            token_cost += (A * 3 + B * 1)
+            token_cost += int(A * 3 + B * 1)
 
     return token_cost
 
