@@ -42,7 +42,7 @@ def part1_matrix(in_games) -> int:
 def part2(in_games) -> int:
     """Solve with higher base vals"""
     token_cost = 0
-    for game in games:
+    for game in in_games:
         c1, c2 = game['prize']
         c1 += 10000000000000
         c2 += 10000000000000
