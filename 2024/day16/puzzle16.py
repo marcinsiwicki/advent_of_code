@@ -126,18 +126,22 @@ def part2(maze) -> int:
         (i, j) for i, row in enumerate(maze) for j, c in enumerate(row) if c == 'E'
     )
 
-    def dfs(current, path):
-        if current == exit_node:
-            paths.append(list(path))
-            return
-        for neighbor in graph.get(current, []):
-            if neighbor not in path:
-                path.append(neighbor)
-                dfs(neighbor, path)
-                path.pop()
-
+    queue = [[start_node]]
     paths = []
-    dfs(start_node, [start_node])
+
+    while queue:
+        path = queue.pop()
+        current_node = path[-1]
+
+        if current_node == exit_node:
+            paths.append(path)
+            continue
+
+        for neighbor in graph[current_node]:
+            if neighbor not in path:
+                new_path = list(path)
+                new_path.append(neighbor)
+                queue.append(new_path)
 
     best_score = float('inf')
     best_paths = []
