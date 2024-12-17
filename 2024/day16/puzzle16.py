@@ -2,6 +2,7 @@
 Advent of Code 2024: Day 16
 """
 import heapq
+from collections import defaultdict
 
 
 def maze_to_graph(maze, include_interm=False):
@@ -29,7 +30,6 @@ def maze_to_graph(maze, include_interm=False):
 
         # check for a corner or straight line
         return neighbors[0][0] != neighbors[1][0] and neighbors[0][1] != neighbors[1][1]
-
 
     for i in range(n_rows):
         for j in range(n_cols):
@@ -64,14 +64,19 @@ class Node:
         self.visited = False
         self.coords = coords
         self.travel_dir = None
-        self.paths = []
 
 
-def part1(maze) -> int:
-    # traverse the graph from S to E in shortest distance
-    # + 1000 for each turn and +1 for each square
-    # start facing east
+def part1(maze: list[list[str]]) -> int:
+    """
+    Find the shortest path from S to E through the maze while incurring a cost
+    for turns in direction. Represent the maze as a graph of connected nodes. 
 
+    Args:
+        maze (list[list[str]]): maze input
+
+    Returns:
+        int: score of the best path
+    """
     graph = maze_to_graph(maze)
     start_node = next(
         (i, j) for i, row in enumerate(maze) for j, c in enumerate(row) if c == 'S'
@@ -117,7 +122,17 @@ def part1(maze) -> int:
     return nodes[exit_node].dist
 
 
-def part2(maze) -> int:
+def part2(maze: list[list[str]]) -> int:
+    """
+    Modified path finding algorithm to represent (node, direction) as the vertex
+    rather than just node. 
+
+    Args:
+        maze (list[list[str]]): input maze
+
+    Returns:
+        int: score of the best path
+    """
     graph = maze_to_graph(maze, include_interm=True)
     start_node = next(
         (i, j) for i, row in enumerate(maze) for j, c in enumerate(row) if c == 'S'
@@ -126,49 +141,37 @@ def part2(maze) -> int:
         (i, j) for i, row in enumerate(maze) for j, c in enumerate(row) if c == 'E'
     )
 
-    queue = [[start_node]]
-    paths = []
+    shortest_paths = []
+    best_dist = float('inf')
+    path_dists = defaultdict(lambda: float('inf')) | {(start_node, (0, 1)): 0}
 
-    while queue:
-        path = queue.pop()
-        current_node = path[-1]
+    pq = [(0, start_node, (0, 1), [start_node])]
 
-        if current_node == exit_node:
-            paths.append(path)
-            continue
+    while pq:
+        dist, node, (di, dj), path = heapq.heappop(pq)
 
-        for neighbor in graph[current_node]:
-            if neighbor not in path:
-                new_path = list(path)
-                new_path.append(neighbor)
-                queue.append(new_path)
+        if node == exit_node:
+            if dist < best_dist:
+                shortest_paths = [path]
+                best_dist = dist
+            elif dist == best_dist:
+                shortest_paths.append(path)
 
-    best_score = float('inf')
-    best_paths = []
-    for path in paths:
-        path_score = 0
-        prev = path[0]
-        prev_dir = (0, 1)
-        # calculate score
-        for curr in path[1:]:
-            di, dj = curr[0] - prev[0], curr[1] - prev[1]
-            if di != 0:
-                path_score += abs(di)
-                di /= abs(di)
-            if dj != 0:
-                path_score += abs(dj)
-                dj /= abs(dj)
-            if (di, dj) != prev_dir:
-                path_score += 1000
-            prev_dir = (di, dj)
-            prev = curr
-        if path_score < best_score:
-            best_score = path_score
-            best_paths = [path]
-        elif path_score == best_score:
-            best_paths.append(path)
+        i, j = node
+        if dist < best_dist:
+            for dist, (i_new, j_new), (di_new, dj_new) in (
+                (dist + 1, (i + di, j + dj), (di, dj)), # straight ahead
+                (dist + 1000, (i, j), (dj, -di)),
+                (dist + 1000, (i, j), (-dj, di)),
+            ):
+                neighbor = (i_new, j_new)
+                neighbor_dir = (di_new, dj_new)
+                if neighbor in graph:
+                    if path_dists.get((neighbor, neighbor_dir), dist + 1) >= dist:
+                        path_dists[(neighbor, neighbor_dir)] = dist
+                        heapq.heappush(pq, (dist, neighbor, neighbor_dir, path + [neighbor]))
 
-    return len(set().union(*best_paths))
+    return len(set().union(*shortest_paths))
 
 
 if __name__ == '__main__':
