@@ -7,9 +7,10 @@ from functools import lru_cache
 
 
 @lru_cache(maxsize=None)
-def build_pattern(target_pattern, towels):
+def build_pattern(target_pattern: str, towels: tuple(str)):
+    """Recursive helper function to determine if pattern can be made from strings."""
     if target_pattern == '':
-        return 1 
+        return 1
     potential_paths = []
     for towel in towels:
         if target_pattern.startswith(towel):
