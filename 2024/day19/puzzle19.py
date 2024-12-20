@@ -42,7 +42,7 @@ def part1(towels: tuple[str], pattern_requests: list[str]) -> int:
     return possible_patterns
 
 
-def part2(towels: tuples[str], pattern_requests: list[str]) -> int:
+def part2(towels: tuple[str], pattern_requests: list[str]) -> int:
     """
     Return the number of ways each pattern can be made.
 
