@@ -41,13 +41,7 @@ def part1(racetrack: list[list[str]]) -> int:
 
             if (vert_shift or horz_shift) and racetrack[i_btw][j_btw] == '#':
                 dist_skipped = (exit_path.index(lag) - exit_path.index(lead)) - 2
-                # print(lead, lag, dist_skipped)
                 cheat_paths[(lead, lag)] = dist_skipped
-
-
-    # value_counts = Counter(cheat_paths.values())
-    # for value in sorted(list(value_counts)):
-        # print(f'{value_counts[value]} cheats save {value} picos')
 
     return sum(1 for k, v in cheat_paths.items() if v >= 100), exit_path
 
@@ -154,17 +148,15 @@ def part2_hard(racetrack: list[list[str]]) -> int:
 
 def part2(racetrack, exit_path):
     cheat_paths = {}
-    for lead_idx, lead in enumerate(exit_path):
-        for lag in exit_path[lead_idx + 1:]:
-            c_lead = complex(*lead)
-            c_lag = complex(*lag)
+    for i in range(len(exit_path)):
+        for j in range(i+1, len(exit_path)):
+            lead = exit_path[i]
+            lag = exit_path[j]
 
-            dist = c_lag - c_lead
-            dist = int(abs(dist.real) + abs(dist.imag))
+            dist = abs(lag[0] - lead[0]) + abs(lag[1] - lead[1])
 
             if dist <= 20:
-                dist_skipped = (exit_path.index(lag) - exit_path.index(lead))
-                dist_skipped -= dist
+                dist_skipped = j - i - dist
                 cheat_paths[(lead, lag)] = dist_skipped
 
     return sum(1 for k, v in cheat_paths.items() if v >= 100)
