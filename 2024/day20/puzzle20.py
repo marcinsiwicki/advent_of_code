@@ -146,7 +146,8 @@ def part2_hard(racetrack: list[list[str]]) -> int:
     return sum(1 for k, v in cheat_paths.items() if v >= 100)
 
 
-def part2(racetrack, exit_path):
+def part2(exit_path):
+    """Find additional exit paths given cheat window."""
     cheat_paths = {}
     for i in range(len(exit_path)):
         for j in range(i+1, len(exit_path)):
@@ -168,4 +169,4 @@ if __name__ == '__main__':
     racetrack = [list(l) for l in racetrack]
     cheat_count, exit_path = part1(racetrack)
     print(f'Cheating paths > 100 picos: {cheat_count}')
-    print(f'Longer cheat window paths: {part2(racetrack, exit_path)}')
+    print(f'Longer cheat window paths: {part2(exit_path)}')
