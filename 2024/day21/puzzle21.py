@@ -64,8 +64,73 @@ class KeypadType(Enum):
     DPAD = 2
 
 
+numeric_pos = {"7": (0, 0), "8": (0, 1), "9": (0, 2), "4": (1, 0), "5": (1, 1), "6": (1, 2),
+               "1": (2, 0), "2": (2, 1), "3": (2, 2), None: (3, 0), "0": (3, 1), "A": (3, 2)}
+directional_pos = {None: (0, 0), "^": (0, 1), "A": (0, 2), "<": (1, 0), "v": (1, 1), ">": (1, 2)}
+
+
+def sanitize_paths(paths, p0, numeric=True):
+
+    excluded_pos = numeric_pos[None] if numeric else directional_pos[None]
+
+    i = 0
+    while i < len(paths):
+        p = list(p0)
+        for d in paths[i]:
+
+            if d == "^":
+                p[0] -= 1
+            if d == "v":
+                p[0] += 1
+
+            if d == "<":
+                p[1] -= 1
+            if d == ">":
+                p[1] += 1
+            
+            if tuple(p) == excluded_pos:
+                paths.pop(i)
+                i -= 1
+                break
+        
+        i += 1
+
+    return paths
+
+
+def get_shortest_paths(src_pos, trg_pos, numeric=True):
+    cx = "^" if trg_pos[0] - src_pos[0] < 0 else "v"
+    dx = abs(trg_pos[0] - src_pos[0])
+    cy = "<" if trg_pos[1] - src_pos[1] < 0 else ">"
+    dy = abs(trg_pos[1] - src_pos[1])
+
+    return sanitize_paths(list(set([cx * dx + cy * dy, cy * dy + cx * dx])), src_pos, numeric=numeric)
+
+def solve_directional(seq):
+    pos = directional_pos["A"]
+
+    sequence = []
+
+    for chunk in seq:
+        for n in chunk:
+            p = directional_pos[n]
+            paths = get_shortest_paths(pos, p, numeric=False)
+            pos = p
+            sequence.append(paths)
+
+    sequence_parts = []
+    for part in sequence:
+        tmp = []
+        for p in part:
+            tmp.append("".join(p) + "A")
+
+        sequence_parts.append(tmp)
+
+    return sequence_parts
+
+
 # @lru_cache(maxsize=None)
-def _find_shortest_path(pad_type, start: str, target: str):
+def _find_shortest_path(pad_type, start: str, target: str, append_A=True):
     # grid weights need to be result of unpacked length rather than
     # single path on current keypad
     if pad_type == 1: #KeypadType.ALPHANUM:
@@ -76,7 +141,7 @@ def _find_shortest_path(pad_type, start: str, target: str):
     visited = set()
     distances = {n: float('inf') for n in grid}
     distances[start] = 0
-    best_path = []
+    best_paths = []
     best_dist = float('inf')
     pq = [(0, start, [start], None)]
 
@@ -86,8 +151,10 @@ def _find_shortest_path(pad_type, start: str, target: str):
             continue
         if node == target:
             if dist < best_dist:
-                best_path = path
+                best_paths = [path]
                 best_dist = dist
+            elif dist <= best_dist:
+                best_paths.append(path)
         visited.add((node, d))
         for neighbor in grid[node]:
             new_dist = dist
@@ -98,12 +165,20 @@ def _find_shortest_path(pad_type, start: str, target: str):
                 distances[neighbor] = new_dist
                 heapq.heappush(pq, (new_dist, neighbor, path + [neighbor], new_dir))
 
-    translated_path = []
-    lookup = grid[start]
-    for n in best_path[1:]:
-        translated_path.append(lookup[n])
-        lookup = grid[n]
-    return tuple(translated_path + ['A'])
+    translated_paths = []
+    for best_path in best_paths:
+        lookup = grid[start]
+        translated_path = []
+        for n in best_path[1:]:
+            translated_path.append(lookup[n])
+            lookup = grid[n]
+        translated_paths.append(translated_path)
+
+    if append_A:
+        translated_paths = [path + ['A'] for path in translated_paths]
+        return translated_paths
+    else:
+        return translated_paths
 
 
 
@@ -114,38 +189,89 @@ def part1(codes: list[str]) -> int:
     # repeat
 
     input_lens = {}
-
     for code in codes:
         code_path = []
         start = 'A'
         for entry in code:
             path = _find_shortest_path(1, start, entry)
             start = entry
-            code_path += path
+            code_path.append(path)
 
         # now we have to get the button presses that will return the above
-        dpad_path = []
-        start = 'A'
-        for entry in code_path:
-            path = _find_shortest_path(2, start, entry)
-            start = entry
-            dpad_path += path
+        target_path = code_path
+        target_len = 0
+        for chunk in target_path:
+            target_len += min([unwind_robot(tuple(seq), 2) for seq in chunk])
+        # target_path = unwind_robot(tuple(target_path), 1)
 
-        dpad2_path = []
-        start = 'A'
-        for entry in dpad_path:
-            path = _find_shortest_path(2, start, entry)
-            start = entry
-            dpad2_path += path
-
-        input_lens[code] = dpad2_path
+        # input_lens[code] = target_path
+        input_lens[code] = target_len 
 
     complexity = 0
     for k, v in input_lens.items():
+        print(k, v)
         k_int = int(k.split('A')[0])
-        complexity += k_int * len(v)
+        complexity += k_int * v
 
     return complexity
+
+
+    # input_lens = {}
+
+    # for code in codes:
+    #     code_path = []
+    #     start = 'A'
+    #     for entry in code:
+    #         path = _find_shortest_path(1, start, entry)
+    #         start = entry
+    #         code_path += path
+
+    #     # now we have to get the button presses that will return the above
+    #     dpad_path = []
+    #     start = 'A'
+    #     for seq in code_path:
+    #         for entry in seq:
+    #             path = _find_shortest_path(2, start, entry)
+    #             start = entry
+    #             dpad_path += path
+
+    #     dpad2_path = []
+    #     start = 'A'
+    #     for seq in dpad_path:
+    #         for entry in seq:
+    #             path = _find_shortest_path(2, start, entry)
+    #             start = entry
+    #             dpad2_path += path
+
+    #     input_lens[code] = dpad2_path
+
+    # complexity = 0
+    # for k, v in input_lens.items():
+    #     print(k, len(v))
+    #     k_int = int(k.split('A')[0])
+    #     complexity += k_int * len(v)
+
+    # return complexity
+
+
+def _unwind_directional(target_path):
+    start = 'A'
+    sequence = []
+
+    for seq in target_path:
+        for entry in seq:
+            paths = _find_shortest_path(2, start, entry, append_A=False)
+            start = entry
+            sequence.append(paths)
+
+    sequence_chunks = []
+    for chunk in sequence:
+        tmp = []
+        for n in chunk:
+            tmp.append(list(n) + ['A'])
+        sequence_chunks.append(tmp)
+
+    return sequence_chunks
 
 
 @lru_cache(maxsize=None)
@@ -155,25 +281,26 @@ def unwind_robot(target_path, n_iters):
         # print('return', target_path)
         return len(target_path)
 
-    start = 'A'
+    subseq_paths = _unwind_directional(target_path)
+    subseq_ans = solve_directional(target_path)
+
+    assert len(subseq_paths) == len(subseq_ans)
+    # for i in range(len(subseq_ans)):
+    #     mine = ''.join(subseq_paths[i][0])
+    #     ans = subseq_ans[i][0]
+    #     if mine != ans:
+    #         print(mine, ans, target_path)
+
     total_len = 0
-    splits = [i+1 for i, c in enumerate(target_path) if c == 'A']
-
-    subseq_paths = []
-    prev = 0
-    for i in splits:
-        subseq_paths.append(target_path[prev:i])
-        prev = i
-
-    # for entry in target_path:
-    for subseq in subseq_paths:
-        dpad_path = []
-        for entry in subseq:
-            path = _find_shortest_path(2, start, entry)
-            dpad_path += path
-            # print(target_path, entry, start, n_iters, path)
-            start = entry
-        total_len += min(unwind_robot(tuple(dpad_path), n_iters-1) for p in path)
+    for chunk in subseq_paths:
+        tmp = float('inf')
+        for seq in chunk:
+            res = unwind_robot(tuple(seq), n_iters-1)
+            # print(res, tmp)
+            if res < tmp:
+                tmp = res
+        total_len += tmp
+        # total_len += min([unwind_robot(seq, n_iters-1) for seq in chunk])
 
     return total_len
 
@@ -186,17 +313,25 @@ def part2(codes: list[str], n_iters) -> int:
         for entry in code:
             path = _find_shortest_path(1, start, entry)
             start = entry
-            code_path += path
+            code_path.append(path)
 
         # now we have to get the button presses that will return the above
         target_path = code_path
-        target_path = unwind_robot(tuple(target_path), n_iters)
+        target_len = 0
+        for chunk in target_path:
+            target_len += min([unwind_robot(tuple(seq), n_iters) for seq in chunk])
 
-        input_lens[code] = target_path
+        input_lens[code] = target_len
+
+        # # now we have to get the button presses that will return the above
+        # target_path = code_path
+        # target_path = unwind_robot(tuple(target_path), n_iters)
+
+        # input_lens[code] = target_path
 
     complexity = 0
     for k, v in input_lens.items():
-        print(k, v)
+        # print(k, v)
         k_int = int(k.split('A')[0])
         complexity += k_int * v
 
@@ -204,14 +339,13 @@ def part2(codes: list[str], n_iters) -> int:
 
 
 if __name__ == '__main__':
-    with open('advent_of_code/2024/day21/test.txt', 'r') as f:
+    with open('advent_of_code/2024/day21/input.txt', 'r') as f:
         codes = f.readlines()
     codes = [c.strip() for c in codes]
 
     s = time.time()
     print(f'Complexity of codes: {part1(codes)} in {time.time() - s}')
     s = time.time()
-    iters = 3
-    print(f'Complexity of codes (n={iters}): {part2(codes, iters)} in {time.time() - s}')
 
-    # print(unwind_robot(('^', '^', '<', '<', 'A'), 2))
+    iters = 25
+    print(f'Complexity of codes (n={iters}): {part2(codes, iters)} in {time.time() - s}')
