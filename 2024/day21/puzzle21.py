@@ -142,24 +142,43 @@ def part1(codes: list[str]) -> int:
 
     complexity = 0
     for k, v in input_lens.items():
-        # print(k, len(v))
         k_int = int(k.split('A')[0])
         complexity += k_int * len(v)
 
     return complexity
 
 
-def part2(codes: list[str], n_iters) -> int:
+@lru_cache(maxsize=None)
+def unwind_robot(target_path, n_iters):
+    # print('target_path', target_path, n_iters)
+    if n_iters == 0:
+        # print('return', target_path)
+        return len(target_path)
 
-    def unwind_robot(target_path):
+    start = 'A'
+    total_len = 0
+    splits = [i+1 for i, c in enumerate(target_path) if c == 'A']
+
+    subseq_paths = []
+    prev = 0
+    for i in splits:
+        subseq_paths.append(target_path[prev:i])
+        prev = i
+
+    # for entry in target_path:
+    for subseq in subseq_paths:
         dpad_path = []
-        start = 'A'
-        for entry in target_path:
+        for entry in subseq:
             path = _find_shortest_path(2, start, entry)
-            start = entry
             dpad_path += path
-        return dpad_path
+            # print(target_path, entry, start, n_iters, path)
+            start = entry
+        total_len += min(unwind_robot(tuple(dpad_path), n_iters-1) for p in path)
 
+    return total_len
+
+
+def part2(codes: list[str], n_iters) -> int:
     input_lens = {}
     for code in codes:
         code_path = []
@@ -171,27 +190,28 @@ def part2(codes: list[str], n_iters) -> int:
 
         # now we have to get the button presses that will return the above
         target_path = code_path
-        for _ in range(n_iters):
-            target_path = unwind_robot(target_path)
+        target_path = unwind_robot(tuple(target_path), n_iters)
 
         input_lens[code] = target_path
 
     complexity = 0
     for k, v in input_lens.items():
-        # print(k, v)
+        print(k, v)
         k_int = int(k.split('A')[0])
-        complexity += k_int * len(v)
+        complexity += k_int * v
 
     return complexity
 
 
 if __name__ == '__main__':
-    with open('advent_of_code/2024/day21/input.txt', 'r') as f:
+    with open('advent_of_code/2024/day21/test.txt', 'r') as f:
         codes = f.readlines()
     codes = [c.strip() for c in codes]
 
     s = time.time()
     print(f'Complexity of codes: {part1(codes)} in {time.time() - s}')
     s = time.time()
-    iters = 2
+    iters = 3
     print(f'Complexity of codes (n={iters}): {part2(codes, iters)} in {time.time() - s}')
+
+    # print(unwind_robot(('^', '^', '<', '<', 'A'), 2))
