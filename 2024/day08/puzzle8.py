@@ -1,14 +1,17 @@
 """
 Advent of Code 2024: Day 8
+Resonant Collinearity
 """
 
 
 def part1(input_map, n_rows, n_cols):
-    """Find antinodes within map."""
-    # antinodes appear when the same antenna type is present in a line
-    # and one elem is X away and the nex is 2x away
-    # is there an open cell that is in a direction of line from an antenna
+    """
+    Find antinodes within map.
 
+    Antinodes appear when the same antenna type is present in a line and one
+    elem is X away and the nex is 2x away is there an open cell that is in a
+    direction of line from an antenna
+    """
     antinodes = set()
     for ants in input_map.values():
         for ant_1 in ants:

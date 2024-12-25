@@ -1,15 +1,17 @@
 """
 Advent of Code 2024: Day 4
+Ceres Search
 """
 
 
 def find_xmas(input_matrix, row, col):
-    """Find instances of XMAS string"""
+    """
+    Find instances of XMAS string.
 
-    # given a start character, search in each direction for remaining characters
-    # make eight new strings and check them for XMAS
-    # can search only in the directions open confined to grid
-
+    Given a start character, search in each direction for remaining characters.
+    Make eight new strings and check them for XMAS. Can search only in the
+    directions open confined to grid
+    """
     n_rows = len(input_matrix)
     n_cols = len(input_matrix[0])
 
@@ -58,10 +60,12 @@ def find_mas(input_matrix, row, col):
 
 
 def part1(word_puzzle: list) -> int:
-    """Search for all XMAS words within puzzle."""
-    # find the anchor X character
-    # search around it in each direction finding the rest of the chars 
-    # create a matrix of the word puzzle
+    """
+    Search for all XMAS words within puzzle.
+
+    Find the anchor X character. Search around it in each direction finding the
+    rest of the chars. Create a matrix of the word puzzle.
+    """
     word_matrix = [list(l.strip()) for l in word_puzzle]
 
     total = 0

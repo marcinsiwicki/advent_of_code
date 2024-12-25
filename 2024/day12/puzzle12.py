@@ -1,5 +1,6 @@
 """
 Advent of Code 2024: Day 12
+Garden Groups
 """
 
 
@@ -22,7 +23,7 @@ def get_regions(garden: list[list[str]]) -> dict:
         garden (list[list[str]]): raw input
 
     Returns:
-        dict: regions by key 
+        dict: regions by key
     """
     # go through the whole garden, build a map of plant to locations
     # then go through each plant and find the adjacent regions

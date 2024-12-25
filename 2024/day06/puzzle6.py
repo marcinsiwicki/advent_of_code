@@ -1,17 +1,18 @@
 """
 Advent of Code 2024: Day 6
+Guard Gallivant
 """
 import time
 import copy
 
-def part1(input_maze: list) -> int:
+
+def part1(input_maze: list) -> tuple[int, list]:
     """Find distinct positions in patrol path."""
     guards = {'^': (-1, 0),
               '>': (0, 1),
               'v': (1, 0),
               '<': (0, -1)
     }
-
 
     def next_guard(cur_guard):
         guards_ = list(guards.keys())
@@ -58,12 +59,12 @@ def part1(input_maze: list) -> int:
 
 
 def is_time_loop(new_matrix, y) -> bool:
+    """Helper function to determine if guard gets stuck in a loop."""
     guards = {'^': (-1, 0),
               '>': (0, 1),
               'v': (1, 0),
               '<': (0, -1)
     }
-
 
     def next_guard(cur_guard):
         guards_ = list(guards.keys())
@@ -78,7 +79,6 @@ def is_time_loop(new_matrix, y) -> bool:
 
     check_char = '^'
     i = y
-    first_iter = True
     known_moves = set()
     while i < n_rows:
         if check_char in new_matrix[i]:
@@ -112,12 +112,14 @@ def is_time_loop(new_matrix, y) -> bool:
 
 
 def part2(input_maze: list, known_path: list) -> int:
-    """Place an obstruction to get the guard stuck in a loop."""
-    # the obstacle should go on somewhere in the path
-    # brute force: for each X place and see if guard still goes out or if 
-    # there is a loop. a loop is defined as guard passing through the starting
-    # position with the starting orientation.
+    """
+    Place an obstruction to get the guard stuck in a loop.
 
+    The obstacle should go on somewhere in the path.
+    Brute force: for each X place and see if guard still goes out or if
+        there is a loop. A loop is defined as guard passing through the starting
+        position with the starting orientation.
+    """
     # find original pos in input_maze
     starting_orientation = '^'
     x_0, y_0 = None, None

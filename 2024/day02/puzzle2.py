@@ -1,9 +1,12 @@
 """
 Advent of Code 2024: Day 2
+Red-Nosed Reports
 """
+
 
 MIN_INC = 1     # minimum step size
 MAX_INC = 3     # maximum step size
+
 
 def check_range(start_value: int, eval_value: int) -> bool:
     """Given two inputs, check that distance between values conforms to expectations."""
@@ -55,8 +58,7 @@ def part2(reports_: list) -> int:
         if sum(i for i in diffs if i > 0) < abs(sum(i for i in diffs if i < 0)):
             level = level[-1::-1]
 
-        i = 0
-        j = 1
+        i, j = 0, 1
         problem_dampened = False
 
         while j < len(level):

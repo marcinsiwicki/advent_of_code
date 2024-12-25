@@ -1,10 +1,11 @@
 """
 Advent of Code 2024: Day 7
+Bridge Repair
 """
 import time
 
 
-def part1(input_eqs: dict) -> int:
+def part1(input_eqs: dict) -> tuple[int, dict]:
     """Determine if + or * operators can be used to achieve result."""
     total_calibrations = 0
     no_match = {}
@@ -26,7 +27,6 @@ def part1(input_eqs: dict) -> int:
 
 def part2(input_eqs: dict) -> int:
     """Adding a new operator."""
-
     total_calibrations = 0
     for key, vals in input_eqs.items():
         w = [[vals[0]]]

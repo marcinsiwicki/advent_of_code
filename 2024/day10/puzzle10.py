@@ -1,16 +1,18 @@
 """
 Advent of Code 2024: Day 10
+Hoof It
 """
 
 
 KNOWN_PEAKS = set()
+
 
 def evaluate_trailhead(top_input: list[list[int]], y: int, x: int, peak: int, distinct_paths=False) -> int:
     """
     Given a topographic map and coordinates, trace through path to a peak.
 
     Args:
-        input (list[list[int]]): topographic map 
+        input (list[list[int]]): topographic map
         y (int): row index
         x (int): col index
         peak (int): search altitude
@@ -50,19 +52,19 @@ def evaluate_trailhead(top_input: list[list[int]], y: int, x: int, peak: int, di
 def part1(topography: list[list[int]]) -> int:
     """
     Return sum of trailhead scores. Trailhead scores are determined by how
-    many peaks are reached from a given trailhead. 
+    many peaks are reached from a given trailhead.
+
+    Keep a set of the trail coordinates.
+    Recursive solution of stepping to the next available coordinate.
+    Iterative of keeping a pointer of where to go back to at each fork
 
     Args:
         topography (list): list of list of string
 
     Returns:
-        int: Sum of each trailhead score.  
+        int: Sum of each trailhead score.
     """
     global KNOWN_PEAKS
-    # keep a set of the trail coordinates
-    # recursive solution of stepping to the next available coordinate
-    # iterative of keeping a pointer of where to go back to at each fork
-
 
     trailheads = set()
     n_rows = len(topography)

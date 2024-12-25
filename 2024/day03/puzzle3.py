@@ -1,7 +1,9 @@
 """
 Advent of Code 2024: Day 3
+Mull It Over
 """
 import re
+
 
 def part1(instrs: list) -> int:
     """Identify multiply instructions and return sum of products."""

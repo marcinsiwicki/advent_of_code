@@ -1,11 +1,12 @@
 """
-Advent of Code 2024: Day 1 
+Advent of Code 2024: Day 1
+Historian Hysteria
 """
 import collections
 
+
 def part1(left: list, right: list) -> int:
     """Calculate pairwise difference"""
-
     lens = [abs(i[0] - i[1]) for i in zip(left, right)]
 
     return sum(lens)
@@ -13,9 +14,8 @@ def part1(left: list, right: list) -> int:
 
 def part2(left: list, right: list) -> int:
     """Return similarity score."""
-
     right_map = collections.Counter(right)
-    sim_scores = [i * right_map[i] for i in left if i in right_map] 
+    sim_scores = [i * right_map[i] for i in left if i in right_map]
 
     return sum(sim_scores)
 
