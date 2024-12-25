@@ -48,13 +48,13 @@ def part2(gates) -> str:
     Find the outgate swaps needed to have xbits and ybits equal zbits after computation.
 
     Start with setting lowest bits and stop when z != x + y. Then trace through gates
-    to determine the swap. 
-    
+    to determine the swap.
+
     Each Z is the result of a XOR(an, bn). One of an or bn needs to be XOR(xn, yn).
     The other needs to be the OR(cn,dn) where cn is the AND(an-1,bn-1). dn is the
     AND(xn-1,yn-1).
     """
-    # we need to set starting wire values and observe the sum at the end of the gate logic 
+    # we need to set starting wire values and observe the sum at the end of the gate logic
 
     swaps = dict()
     # step through, setting lowest bit and observing when input is incorrect
