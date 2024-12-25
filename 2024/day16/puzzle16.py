@@ -1,11 +1,13 @@
 """
 Advent of Code 2024: Day 16
+Reindeer Maze
 """
 import heapq
 from collections import defaultdict
 
 
 def maze_to_graph(maze, include_interm=False):
+    """Helper function to convert maze to nodes of graph."""
     n_rows, n_cols = len(maze), len(maze[0])
     graph = {}
 
@@ -69,7 +71,7 @@ class Node:
 def part1(maze: list[list[str]]) -> int:
     """
     Find the shortest path from S to E through the maze while incurring a cost
-    for turns in direction. Represent the maze as a graph of connected nodes. 
+    for turns in direction. Represent the maze as a graph of connected nodes.
 
     Args:
         maze (list[list[str]]): maze input
@@ -125,7 +127,7 @@ def part1(maze: list[list[str]]) -> int:
 def part2(maze: list[list[str]]) -> int:
     """
     Modified path finding algorithm to represent (node, direction) as the vertex
-    rather than just node. 
+    rather than just node.
 
     Args:
         maze (list[list[str]]): input maze

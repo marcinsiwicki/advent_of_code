@@ -1,11 +1,12 @@
 """
 Advent of Code 2024: Day 17
+Chronospatial Computer
 """
 
 
 def run_program(registers, program_inputs) -> list[int]:
     """
-    Given starting register values and list of commands, run the program and 
+    Given starting register values and list of commands, run the program and
     return the output.
     """
 
@@ -139,4 +140,3 @@ if __name__ == '__main__':
     part1([register_a, register_b, register_c], program)
     correct_a = part2([register_a, register_b, register_c], program)
     print(f'Correct A register is: {correct_a}')
-

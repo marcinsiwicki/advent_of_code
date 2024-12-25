@@ -1,5 +1,6 @@
 """
 Advent of Code 2024: Day 15
+Warehouse Woes
 """
 
 
@@ -116,7 +117,7 @@ def part2(warehouse_map: list[list[str]], move_list = list[str]) -> int:
     def _move_vertical(warehouse_map, i, j, dir_i):
         """
         Evaluate box move vertically. Since boxes are wide, can create branches.
-        
+
         Now moving up and down which needs to check edge alignment.
         If edges align, don't need to go adjacent, but do need to track.
         """

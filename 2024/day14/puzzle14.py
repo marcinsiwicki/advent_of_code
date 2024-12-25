@@ -1,11 +1,14 @@
 """
 Advent of Code 2024: Day 14
+Restroom Redoubt
 """
+import pprint
+import numpy as np
+
+
 MODE = 'PROD'
 PUZZLE_PARAMS = {'DEBUG': {'file': 'test.txt', 'height': 7, 'width': 11},
                  'PROD': {'file': 'input.txt', 'height': 103, 'width': 101}}
-import pprint
-import numpy as np
 
 
 def part1(robots: list[list[tuple]], n_seconds: int = 100) -> int:
@@ -21,7 +24,7 @@ def part1(robots: list[list[tuple]], n_seconds: int = 100) -> int:
         int: return product of each quadrants sum of robots
     """
     # we can extrapolate each robot to its final position in an unconstrained grid
-    # then work backwards and determine how many wraps are needed to adjust to the final pos 
+    # then work backwards and determine how many wraps are needed to adjust to the final pos
     quadrant_scores = [[0, 0], [0, 0]]
 
     n_width = PUZZLE_PARAMS[MODE]['width']
@@ -46,7 +49,6 @@ def part1(robots: list[list[tuple]], n_seconds: int = 100) -> int:
         product *= s
 
     return product
-
 
 
 def part2(robots: list[list[tuple]]) -> int:

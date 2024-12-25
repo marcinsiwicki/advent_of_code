@@ -1,5 +1,6 @@
 """
 Advent of Code 2024: Day 13
+Claw Contraption
 """
 import time
 import numpy as np
@@ -62,7 +63,7 @@ if __name__ == '__main__':
     with open('advent_of_code/2024/day13/test.txt', 'r') as f:
         raw_games = f.readlines()
 
-    # transform each game into a system of equations 
+    # transform each game into a system of equations
     games = []
     game = {}
     for l in raw_games:
